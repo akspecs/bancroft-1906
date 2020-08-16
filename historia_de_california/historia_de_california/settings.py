@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = 'historia_de_california.spiders'
 #USER_AGENT = 'historia_de_california (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
