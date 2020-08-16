@@ -1,0 +1,58 @@
+# here are some notes that provide some documentation on the
+#  process of scraping archive.org for relevant metadata
+#
+#
+# hacking my way through:
+#  web scraping the illusive,
+#   gone since the great fire of 1906 (at least we still have their summaries...)
+#    documentos para la historia de california
+#
+#
+# main tools used:
+#  python 3.6+ (tested with 3.8.5)
+#   scrapy 2.3.0
+#
+#
+# urls depending on their predictability can be generated
+# via a list comprehension, or similar methods using the resulting url after
+# entering a search query
+#
+# more relevant search queries include (and are not limited to)
+# banc mss {...}
+#
+# desired (wip):
+#  converting / ordering values by their roman numeral values -- e.g. vol. i-ii, etc...
+#  points of contention (currently a shell one-liner gives us call numbers with multiple entries)
+#
+#
+# note that by cloning the repository, most of these steps will already be done
+# in order for the scrapy commands to work, one must be in the 1st historia_de_california directory
+# additionally, the metadata json is stored in the output folder
+#
+#
+# start the scrapy project by running:
+
+scrapy startproject historia_de_california
+cd historia_de_california
+
+# this is the 'root' the scrapy project from where one would run relevant `scrapy <commands>`
+#
+# inside of the settings.py file, set ROBOTSTXT to False
+#
+#
+# in order to compile a list of urls, run the following:
+
+scrapy crawl web_archive_search_results -o web_archive_result_urls.csv
+sed '1d' web_archive_result_urls.csv > web_archive_result_urls.txt
+
+# then, with the web_archive_result_urls.txt in the root of the scrapy project, run:
+scrapy crawl scrape_web_archive_results -o web_archive_scraped_data.json
+
+# we are able to print the call numbers scraped via a helper script
+# but we also need the create a web_archive_scraped_data.csv
+scrapy crawl scrape_web_archive_results -o web_archive_scraped_data.csv
+python3 print_call_numbers.py
+
+# we can also view how frequently a call number is used (for cleaner results, grep C-A or C-B):
+python3 print_call_numbers.py | grep 'C-A' | awk '{print $NF,$0}' | sort -n | cut -d ' ' -f 2- | uniq -c
+
